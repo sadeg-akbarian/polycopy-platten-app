@@ -1,5 +1,9 @@
-# Vue 3 + Vite
+# Platten-App
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Dies ist ein Zeiterfassungssystem für alle Arbeiten in Bezug auf Schallplatten.
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+- Bitte selber den eigenen Namen eintippen und die Arbeit aussuchen.
+- Dann den Start-Button anklicken. Der Timer fängt somit an zu zählen.
+- Es gibt die Möglichkeit die Zeit zu pausieren mit dem Pause-Button.
+- Wenn die Aufgabe erledigt ist, einfach den Stopp-Button anklicken und dann in das vorgesehene Eingabefeld die Stückzahl eintippen.
+- Wenn alles richtig eingegeben ist, auf den Senden-button klicken.
