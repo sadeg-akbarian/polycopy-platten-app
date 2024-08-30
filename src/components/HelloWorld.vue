@@ -6,10 +6,54 @@ export default {
       selectedWork: "Wähle die Arbeit aus",
       whichMaintanance: "Welche Wartung",
       displayWartungPopUp: "none",
+      inputUser: false,
+      inputWork: false,
+      inputMaintanance: false,
+      allInputsFilled: false,
       quantity: "",
       quantityOfOrders: "",
       quantityOfVinyls: "",
+      theSeconds: "00",
+      theMinutes: "00",
+      theHours: "00",
+      playActive: false,
+      haltActive: true,
+      stopActive: true,
+      sendActive: true,
     };
+  },
+  computed: {
+    showInputStueckzahl() {
+      if (
+        this.selectedWork === "Schallplatten waschen" ||
+        this.selectedWork === "Eingabe Discogs" ||
+        this.selectedWork === "Wartung Maschinen"
+      ) {
+        return true;
+      }
+    },
+  },
+  methods: {
+    checkRequirements() {
+      if (this.userName === "") {
+        this.inputUser = true;
+        this.allInputsFilled = false;
+      } else {
+        if (this.selectedWork === "Wähle die Arbeit aus") {
+          this.inputWork = true;
+          this.allInputsFilled = false;
+        } else if (this.selectedWork === "Wartung Maschinen") {
+          if (this.whichMaintanance === "Welche Wartung") {
+            this.inputMaintanance = true;
+            this.allInputsFilled = false;
+          } else {
+            this.allInputsFilled = true;
+          }
+        } else {
+          this.allInputsFilled = true;
+        }
+      }
+    },
   },
   props: {
     msg: String,
@@ -22,8 +66,18 @@ export default {
     <h1>{{ msg }}</h1>
     <div class="input-area">
       <div class="before-start-area">
-        <input type="text" placeholder="Benutzername" v-model="userName" />
-        <select v-model="selectedWork">
+        <input
+          type="text"
+          placeholder="Benutzername"
+          v-model="userName"
+          :class="{ 'input-alert': inputUser }"
+          @click="inputUser = false"
+        />
+        <select
+          v-model="selectedWork"
+          :class="{ 'input-alert': inputWork }"
+          @click="inputWork = false"
+        >
           <option disabled selected>Wähle die Arbeit aus</option>
           <option value="Schallplatten waschen">Schallplatten waschen</option>
           <option value="Eingabe Discogs">Eingabe Discogs</option>
@@ -38,6 +92,8 @@ export default {
           class="wartungSelection"
           v-show="selectedWork === 'Wartung Maschinen'"
           v-model="whichMaintanance"
+          :class="{ 'input-alert': inputMaintanance }"
+          @click="inputMaintanance = false"
         >
           <option disabled selected>Welche Wartung</option>
           <option value="Wartung 1">Wartung 1</option>
@@ -59,7 +115,7 @@ export default {
           type="text"
           placeholder="Stückzahl"
           v-model="quantity"
-          v-show="selectedWork !== 'Bestellungen bearbeiten'"
+          v-show="showInputStueckzahl"
         />
         <input
           type="text"
@@ -82,13 +138,19 @@ export default {
       </div>
     </div>
     <div class="button-area">
-      <button type="button">▶</button>
-      <button type="button">||</button>
-      <button type="button">■</button>
-      <button type="button">Senden</button>
+      <button type="button" :disabled="playActive" @click="checkRequirements()">
+        ▶
+      </button>
+      <button type="button" :disabled="haltActive">||</button>
+      <button type="button" :disabled="stopActive">■</button>
+      <button type="button" :disabled="sendActive">Senden</button>
     </div>
     <div class="time-area">
-      <p><span>00</span>:<span>00</span>:<span>00</span></p>
+      <p>
+        <span>{{ theHours }}</span
+        >:<span>{{ theMinutes }}</span
+        >:<span>{{ theSeconds }}</span>
+      </p>
     </div>
   </div>
 </template>
@@ -132,6 +194,10 @@ export default {
 .wartung-container p {
   font-size: 1rem;
   margin-top: 0;
+}
+
+.input-alert {
+  border: red 0.25rem dotted;
 }
 
 h2 {
