@@ -56,6 +56,11 @@ export default {
           } else {
             this.allInputsFilled = true;
           }
+        } else if (
+          this.selectedWork === "Lager arbeiten" ||
+          this.selectedWork === "Messe Vorbereitung"
+        ) {
+          this.allInputsFilled = true;
         } else {
           this.allInputsFilled = true;
         }
@@ -131,6 +136,7 @@ export default {
           regex.test(this.quantity) === false &&
           this.quantity !== ""
         ) {
+          this.sendActive = true;
           alert("Bitte gebe nur Zahlen/Ziffern für die Stückzahl ein!!!");
           this.inputQuantity = true;
         } else if (
@@ -149,6 +155,7 @@ export default {
           regex.test(this.quantityOfOrders) === false &&
           this.quantityOfOrders !== ""
         ) {
+          this.sendActive = true;
           alert("Bitte gebe nur Zahlen/Ziffern für die Stückzahl ein!!!");
           this.inputQuantityOrders = true;
           this.quantityOfOrders = "";
@@ -161,6 +168,7 @@ export default {
           regex.test(this.quantityOfVinyls) === false &&
           this.quantityOfVinyls !== ""
         ) {
+          this.sendActive = true;
           alert("Bitte gebe nur Zahlen/Ziffern für die Stückzahl ein!!!");
           this.inputQuantityVinyls = true;
           this.quantityOfVinyls = "";
@@ -177,11 +185,75 @@ export default {
       }
     },
     activateSendButton() {
-      if (this.validQuantities === true && this.allInputsFilled === true) {
+      if (
+        (this.validQuantities === true && this.allInputsFilled === true) ||
+        this.selectedWork === "Lager arbeiten" ||
+        this.selectedWork === "Messe Vorbereitung"
+      ) {
         this.sendActive = false;
       } else {
         alert("Bitte überprüfe nochmal alle Eingaben!");
       }
+    },
+    deleteEverything() {
+      this.userName = "";
+      this.selectedWork = "Wähle die Arbeit aus";
+      this.whichMaintanance = "Welche Wartung";
+      this.displayWartungPopUp = "none";
+      this.inputName = false;
+      this.inputWork = false;
+      this.inputMaintanance = false;
+      this.allInputsFilled = false;
+      this.quantity = "";
+      this.quantityOfOrders = "";
+      this.quantityOfVinyls = "";
+      this.inputQuantity = false;
+      this.inputQuantityOrders = false;
+      this.inputQuantityVinyls = false;
+      this.theSeconds = "00";
+      this.theMinutes = "00";
+      this.theHours = "00";
+      this.playActive = false;
+      this.haltActive = true;
+      this.stopActive = true;
+      this.sendActive = true;
+      this.intervallRunning = null;
+      this.wasItStopped = false;
+      this.validQuantities = false;
+    },
+    sendTheData() {
+      function createUniqueId() {
+        const dateString = Date.now().toString(36);
+        const randomness = Math.random().toString(36).substring(2);
+        return dateString + randomness;
+      }
+      const uniqueId = createUniqueId();
+      const workSheet = {
+        user: this.userName,
+        whichWorkWasDone: this.selectedWork,
+        time: this.theHours + ":" + this.theMinutes + ":" + this.theSeconds,
+        id: uniqueId,
+      };
+      if (
+        this.selectedWork === "Schallplatten waschen" ||
+        this.selectedWork === "Eingabe Discogs" ||
+        this.selectedWork === "Wartung Maschinen"
+      ) {
+        workSheet.quantity = this.quantity;
+      } else if (this.selectedWork === "Bestellungen bearbeiten") {
+        workSheet.quantityOfOrders = this.quantityOfOrders;
+        workSheet.quantityOfVinyls = this.quantityOfVinyls;
+      }
+      if (this.selectedWork === "Wartung Maschinen") {
+        workSheet.whichWorkWasDone = this.whichMaintanance;
+      }
+      let workSheetsArchiv = JSON.parse(localStorage.getItem("Quantity Notes"));
+      if (workSheetsArchiv === null) {
+        workSheetsArchiv = [];
+      }
+      workSheetsArchiv.push(workSheet);
+      localStorage.setItem("Quantity Notes", JSON.stringify(workSheetsArchiv));
+      this.deleteEverything();
     },
   },
   props: {
@@ -254,6 +326,11 @@ export default {
           :class="{ 'input-alert': inputQuantity }"
           @click="inputQuantity = false"
           @blur="validateAchievedNumbers()"
+          @keyup="
+            if (sendActive === false) {
+              sendActive = true;
+            }
+          "
         />
         <input
           type="text"
@@ -264,6 +341,11 @@ export default {
           :class="{ 'input-alert': inputQuantityOrders }"
           @click="inputQuantityOrders = false"
           @blur="validateAchievedNumbers()"
+          @keyup="
+            if (sendActive === false) {
+              sendActive = true;
+            }
+          "
         />
         <input
           type="text"
@@ -274,6 +356,11 @@ export default {
           :class="{ 'input-alert': inputQuantityVinyls }"
           @click="inputQuantityVinyls = false"
           @blur="validateAchievedNumbers()"
+          @keyup="
+            if (sendActive === false) {
+              sendActive = true;
+            }
+          "
         />
         <div class="explanationForSendenButton">
           Wenn alles richtig eingegeben ist, <br />
@@ -315,7 +402,9 @@ export default {
       >
         ■
       </button>
-      <button type="button" :disabled="sendActive">Senden</button>
+      <button type="button" :disabled="sendActive" @click="sendTheData()">
+        Senden
+      </button>
     </div>
     <div class="time-area">
       <p>
