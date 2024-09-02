@@ -44,6 +44,7 @@ export default {
       if (this.userName === "") {
         this.inputName = true;
         this.allInputsFilled = false;
+        this.sendActive = true;
       } else {
         if (this.selectedWork === "Wähle die Arbeit aus") {
           this.inputWork = true;
@@ -175,6 +176,13 @@ export default {
         }
       }
     },
+    activateSendButton() {
+      if (this.validQuantities === true && this.allInputsFilled === true) {
+        this.sendActive = false;
+      } else {
+        alert("Bitte überprüfe nochmal alle Eingaben!");
+      }
+    },
   },
   props: {
     msg: String,
@@ -193,6 +201,11 @@ export default {
           v-model="userName"
           :class="{ 'input-alert': inputName }"
           @click="inputName = false"
+          @keyup="
+            if (wasItStopped === true) {
+              checkRequirements();
+            }
+          "
         />
         <select
           v-model="selectedWork"
