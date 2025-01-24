@@ -8,4 +8,4 @@ Dies ist ein Zeiterfassungssystem für alle Arbeiten in Bezug auf Schallplatten.
 - Wenn die Aufgabe erledigt ist, einfach den Stopp-Button anklicken und dann in das vorgesehene Eingabefeld die Stückzahl eintippen.
 - Wenn alles richtig eingegeben ist, auf den Senden-button klicken.
 
-Node version 20.10.0 benutzt
+Project coded with Node version 20.10.0
